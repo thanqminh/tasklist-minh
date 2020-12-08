@@ -4,7 +4,7 @@ Rails.application.routes.draw do
     resources :todos
     get 'share' => 'share_tasks#index'
     post 'share' => 'share_tasks#create'
-    put 'share' => 'share_tasks#update'
+    put 'share/:user_id' => 'share_tasks#update'
     delete 'share/:user_id' => 'share_tasks#destroy'
   end
   get 'shared' => 'task_lists#shared'
