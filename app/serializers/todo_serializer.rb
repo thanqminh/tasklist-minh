@@ -1,3 +1,3 @@
 class TodoSerializer < ApplicationSerializer
-  attributes :id, :name, :done
+  attributes :id, :name, :done, :description
 end
