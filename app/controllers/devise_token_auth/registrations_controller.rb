@@ -98,7 +98,8 @@ module DeviseTokenAuth
     end
 
     def sign_up_params
-      params.permit(*params_for_resource(:sign_up))
+      permitted = *params_for_resource(:sign_up)
+      params.permit(permitted + [:name])
     end
 
     def account_update_params
