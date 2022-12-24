@@ -1,5 +1,6 @@
 class TodosController < ApiController
-  before_action :authenticate_user!, :check_permission
+  before_action :authenticate_user!
+  before_action :check_permission, except: [:search]
   before_action :set_todo, only: [:show, :edit, :update, :destroy]
 
   def check_permission
@@ -24,8 +25,8 @@ class TodosController < ApiController
   end
 
   def search
-    return head :bad_request unless params.has_key?(:name) && params[:name].blank?
-    @todos = Todos.where('name LIKE ?', "%#{params[:name]}%")
+    return head :bad_request unless params.has_key?("name") && params["name"].present?
+    @todos = Todo.where("task_list_id IN (?)", current_user.task_lists.pluck(:id)).where('name LIKE ?', "%#{params[:name]}%")
     render :index
   end
 
