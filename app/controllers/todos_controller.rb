@@ -12,7 +12,9 @@ class TodosController < ApiController
       if @list.user_id != current_user.id
         @share = ShareTask.find_by_task_list_id_and_user_id(@list.id,current_user.id)
         head :not_found if @share.blank?
-        head :forbidden unless @share.is_write?
+        if (params[:action] != "index" && params[:action] != "show")
+          head :forbidden unless @share.is_write?
+        end
       end
     end
   end
@@ -26,7 +28,8 @@ class TodosController < ApiController
 
   def search
     return head :bad_request unless params.has_key?("name") && params["name"].present?
-    @todos = Todo.where("task_list_id IN (?)", current_user.task_lists.pluck(:id)).where('name LIKE ?', "%#{params[:name]}%")
+    tasklistIds = current_user.task_lists.pluck(:id) + current_user.shared_task_lists.pluck(:id)
+    @todos = Todo.where("task_list_id IN (?)", tasklistIds).where('name LIKE ?', "%#{params[:name]}%")
     render :index
   end
 
